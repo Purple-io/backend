@@ -5,7 +5,7 @@ import cors from 'cors';
 import 'dotenv/config.js';
 import morgan from 'morgan';
 import { createServer } from 'http';
-import * as io from "socket.io"
+import * as io from 'socket.io';
 import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
 import matchRouter from './src/routes/match.js';
@@ -35,25 +35,29 @@ app.use('/login', loginRouter);
 app.use('/match', matchRouter);
 app.use('/chat', chatRouter);
 
-
-
-const server = createServer(app); 
+const server = createServer(app);
 const socketio = new io.Server(server);
 
-socketio.on("connection", (socket)=>{
-  console.log("user connected");
-  socket.on("disconnect", ()=>{
-    console.log("Disconnected")
-})
+socketio.on('connection', (socket) => {
+  console.log('user connected');
+  socket.on('disconnect', () => {
+    console.log('Disconnected');
+  });
 });
 
-socketio.on("sendMessage", (data) => {
+socketio.on('sendMessage', (data) => {
   sendMessage(data, socket);
 });
 
 // socketio.on("deleteMessage", (data) => {
 //   deleteMessage(data, socket);
 // });
+
+socketio.on('chat message', function (msg) {
+  console.log('message: ' + msg);
+  //broadcast message to everyone in port:5000 except yourself.
+  socket.broadcast.emit('received', { message: msg });
+});
 
 server.listen(port, () => {
   console.log(`SERVER Server is running on port: ${port}`);
