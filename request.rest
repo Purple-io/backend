@@ -18,3 +18,14 @@ Content-Type: application/json
     "email": "test1@gmail.com",
     "password": "Pass&123"
 }
+
+###
+
+GET http://localhost:5000/match/find
+Content-Type: application/json
+
+{
+    "userId": "6030bd7c572de23214f8b707",
+    "issue": "Gun Control",
+    "rating": null
+}
