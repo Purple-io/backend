@@ -4,7 +4,7 @@ import { check } from 'express-validator';
 
 const router = Router();
 router.post(
-  '/register',
+  '/',
   [
     check('email', 'Invalid email address').isEmail(),
     check('first_name', 'first name cannot be empty').isLength({ min: 1 }),
@@ -23,7 +23,5 @@ router.post(
   ],
   register
 );
-
-// router.route('/').post(register);
 
 export default router;
