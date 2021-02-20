@@ -25,13 +25,18 @@ export const sendMessage = async (data, socket) => {
     let fromUser = null;
     let toUser = null;
     if (user.email === users[0].email) {
-      fromUser = user[0];
-      toUser = user[1];
+      fromUser = users[0];
+      toUser = users[1];
     } else {
-      fromUser = user[1];
-      toUser = user[0];
+      fromUser = users[1];
+      toUser = users[0];
     }
-  
+    console.log("from User");
+    console.log(fromUser);
+    console.log("to User");
+    console.log(toUser);
+    
+    
     let message = new Message({
       fromUser: fromUser,
       toUser: toUser,
