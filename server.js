@@ -4,11 +4,14 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import 'dotenv/config.js';
 import morgan from 'morgan';
-
+import { createServer } from 'http';
+import * as io from "socket.io"
 import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
 import matchRouter from './src/routes/match.js';
 import chatRouter from './src/routes/chatRoutes.js';
+
+import { sendMessage } from './src/socket/chatSocket.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,6 +35,26 @@ app.use('/login', loginRouter);
 app.use('/match', matchRouter);
 app.use('/chat', chatRouter);
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
+
+
+const server = createServer(app); 
+const socketio = new io.Server(server);
+
+socketio.on("connection", (socket)=>{
+  console.log("user connected");
+  socket.on("disconnect", ()=>{
+    console.log("Disconnected")
+})
+});
+
+socketio.on("sendMessage", (data) => {
+  sendMessage(data, socket);
+});
+
+// socketio.on("deleteMessage", (data) => {
+//   deleteMessage(data, socket);
+// });
+
+server.listen(port, () => {
+  console.log(`SERVER Server is running on port: ${port}`);
 });

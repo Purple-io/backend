@@ -11,7 +11,14 @@ const chatSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'message',
   }],
-  banned: [{type: String}],
+  banned: {
+    type: [String],
+    default: [],
+  },
+  issue: {
+    type: String,
+    default: "",
+  }
 });
 
 export default mongoose.model('chat', chatSchema);

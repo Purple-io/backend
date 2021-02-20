@@ -5,7 +5,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 
 const router = Router();
-router.use('/', verifyAuthToken);
+// router.use('/', verifyAuthToken);
 router.route('/send').post(sendMessage);
 // router.route('/createChat').post(createChat);
 router.route('/getMessages').get(getMessages);
