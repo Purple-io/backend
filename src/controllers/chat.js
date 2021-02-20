@@ -2,16 +2,18 @@ import Chat from '../models/chat.model.js';
 import Queue from '../models/queue.model.js';
 import User from '../models/user.model.js';
 import Message from '../models/message.model.js';
+import {censor} from '../controllers/censor.js';
 
 export const sendMessage = async (req, res) => {
   try {
-    const { messageContent, chatId } = req.body;
+    let { messageContent, chatId } = req.body;
     const user = req.user;
     const chat = await Chat.findById(chatId).populate('userIds');
     if (chat === null) {
       res.status(404).json({ error: 'Chat does not exist.' });
       return;
     }
+    messageContent = censor(messageContent, chat.banned);
     console.log('CHAT: ');
     console.log(chat);
     const users = chat.userIds;
