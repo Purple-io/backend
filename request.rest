@@ -2,7 +2,7 @@ POST http://localhost:5000/register
 Content-Type: application/json
 
 {
-    "email": "test",
+    "email": "test1@gmail.com",
     "firstName" : "test1",
     "lastName" : "test1",
     "affiliation": 3,
