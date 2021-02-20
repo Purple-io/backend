@@ -5,13 +5,15 @@ import Message from '../models/message.model.js';
 import mongoose from 'mongoose';
 
 export const sendMessage = async (data, socket) => {
-    const { messageContent, chatId } = data;
-  socket.broadcast.emit("received", { message: messageContent });
+  const { messageContent, chatId } = data;
+  socket.broadcast.emit('received', { message: messageContent });
   const user = req.user;
-  const chat = await Chat.findById(chatId).populate('userIds').catch((err) => {
-    console.error(err);
-    return;
-  });
+  const chat = await Chat.findById(chatId)
+    .populate('userIds')
+    .catch((err) => {
+      console.error(err);
+      return;
+    });
   if (chat === null) {
     return;
   }
@@ -22,8 +24,8 @@ export const sendMessage = async (data, socket) => {
     fromUser = user[0];
     toUser = user[1];
   } else {
-      fromUser = user[1];
-      toUser = user[0];
+    fromUser = user[1];
+    toUser = user[0];
   }
 
   let message = new Message({
@@ -35,7 +37,7 @@ export const sendMessage = async (data, socket) => {
     console.error(err);
     return;
   });
-  chat.messages.push({_id: message.id});
+  chat.messages.push({ _id: message.id });
   await chat.save().catch((err) => {
     console.error(err);
     return;

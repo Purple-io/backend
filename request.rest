@@ -29,3 +29,13 @@ Content-Type: application/json
     "issue": "Gun Control",
     "rating": null
 }
+
+###
+
+POST http://localhost:5000/chat/send
+Content-Type: application/json
+
+{
+    "messageContent": "hello ke",
+    "chatId": "6031448dd2199fab574066fa"
+}

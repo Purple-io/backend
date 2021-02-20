@@ -4,94 +4,78 @@ import User from '../models/user.model.js';
 import Message from '../models/message.model.js';
 
 export const sendMessage = async (req, res) => {
-  const { messageContent, chatId } = req.body;
-  const user = req.user;
-  const chat = await Chat.findById(chatId)
-    .populate('userIds')
-    .catch((err) => {
-      console.error(err);
-      res.status(500).json({ error: 'DB error.' });
+  try {
+    const { messageContent, chatId } = req.body;
+    const user = req.user;
+    const chat = await Chat.findById(chatId).populate('userIds');
+    if (chat === null) {
+      res.status(404).json({ error: 'Chat does not exist.' });
       return;
+    }
+    console.log('CHAT: ');
+    console.log(chat);
+    const users = chat.userIds;
+    let fromUser = null;
+    let toUser = null;
+    if (user.email === users[0].email) {
+      fromUser = users[0];
+      toUser = users[1];
+    } else {
+      fromUser = users[1];
+      toUser = users[0];
+    }
+    console.log('from and to user: ');
+    console.log(fromUser);
+    console.log(toUser);
+    let message = new Message({
+      fromUser: fromUser,
+      toUser: toUser,
+      content: messageContent,
     });
-  if (chat === null) {
-    res.status(500).json({ error: 'Chat does not exist.' });
-    return;
-  }
-  const users = chat.userIds;
-  let fromUser = null;
-  let toUser = null;
-  if (user.email === users[0].email) {
-    fromUser = user[0];
-    toUser = user[1];
-  } else {
-    fromUser = user[1];
-    toUser = user[0];
-  }
-
-  let message = new Message({
-    fromUser: fromUser,
-    toUser: toUser,
-    content: messageContent,
-  });
-  await message.save().catch((err) => {
+    await message.save();
+    chat.messageIds.push({ _id: message.id });
+    await chat.save();
+    res.status(200).json({ message: 'success' });
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'There was an error with the database.' });
-    return;
-  });
-  chat.messages.push({ _id: message.id });
-  await chat.save().catch((err) => {
-    console.error(err);
-    res.status(500).json({ error: 'There was an error with the database.' });
-    return;
-  });
-  res.status(200).json({ message: 'success' });
+  }
 };
 
 export const createChat = async (data) => {
-  const { user1Id, user2Id, banned, queueId } = data;
-  console.log('Queue Id: ' + queueId);
-  let user1 = await User.findById(user1Id).catch((err) => {
+  try {
+    const { user1Id, user2Id, banned, queueId } = data;
+    console.log('Queue Id: ' + queueId);
+    let user1 = await User.findById(user1Id);
+    if (user1 === null) {
+      return;
+    }
+    let user2 = await User.findById(user2Id);
+    if (user2 === null) {
+      return;
+    }
+    let userIdsArray = [user1, user2];
+    let chat = new Chat({
+      userIds: userIdsArray,
+      banned: banned,
+    });
+    await chat.save();
+    console.log('Chat: ');
+    console.log(chat);
+    Queue.findByIdAndDelete(queueId).catch((err) => {
+      console.error(err);
+      return;
+    });
+    user1.pendingChats.pull({ _id: queueId });
+    user2.pendingChats.pull({ _id: queueId });
+    user1.chats.push({ _id: chat._id });
+    user2.chats.push({ _id: chat._id });
+    await user1.save();
+    await user2.save();
+    return chat;
+  } catch (err) {
     console.error(err);
-    return;
-  });
-  if (user1 === null) {
-    return;
   }
-  let user2 = await User.findById(user2Id).catch((err) => {
-    console.error(err);
-    return;
-  });
-  if (user2 === null) {
-    return;
-  }
-  let userIdsArray = [user1, user2];
-  let chat = new Chat({
-    userIds: userIdsArray,
-    banned: banned,
-  });
-  await chat.save().catch((err) => {
-    console.error(err);
-    return;
-  });
-  console.log('Chat: ');
-  console.log(chat);
-  Queue.findByIdAndDelete(queueId).catch((err) => {
-    console.error(err);
-    return;
-  });
-  user1.pendingChats.pull({ _id: queueId });
-  user2.pendingChats.pull({ _id: queueId });
-  user1.chats.push({ _id: chat._id });
-  user2.chats.push({ _id: chat._id });
-  await user1.save().catch((err) => {
-    console.error(err);
-    return;
-  });
-  await user2.save().catch((err) => {
-    console.error(err);
-    return;
-  });
-  return chat;
 };
 
 export const getMessages = async (req, res) => {
@@ -159,17 +143,17 @@ export const deleteMessage = async (req, res) => {
 export const getAllChats = async (req, res) => {
   const { userId } = req.query;
   const user = await User.findById(userId)
-  .populate({
-    path: 'chats',
-    populate: {
-      path: 'userIds', 
-    }
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).json({ error: 'There was an error with the database.' });
-    return;
-  });
+    .populate({
+      path: 'chats',
+      populate: {
+        path: 'userIds',
+      },
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'There was an error with the database.' });
+      return;
+    });
   if (user === null) {
     res.status(500).json({ error: 'User does not exist.' });
     return;
@@ -180,11 +164,12 @@ export const getAllChats = async (req, res) => {
 export const getAllPendingChats = async (req, res) => {
   const { userId } = req.query;
   const user = await User.findById(userId)
-  .populate('pendingChats').catch((err) => {
-    console.error(err);
-    res.status(500).json({ error: 'There was an error with the database.' });
-    return;
-  });
+    .populate('pendingChats')
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'There was an error with the database.' });
+      return;
+    });
   if (user === null) {
     res.status(500).json({ error: 'User does not exist.' });
     return;
