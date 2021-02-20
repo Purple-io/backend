@@ -13,6 +13,10 @@ const queueSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  banned: {
+    type: [String],
+    default: [],
+  },
 });
 
 export default mongoose.model('queue', queueSchema);
