@@ -40,5 +40,3 @@ export const findMatch = async (req, res) => {
     res.status(500).json({ error: 'There was an error. Please try again!' });
   }
 };
-
-export const 

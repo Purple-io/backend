@@ -7,11 +7,8 @@ import morgan from 'morgan';
 
 import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
-<<<<<<< HEAD
 import matchRouter from './src/routes/match.js';
-=======
 import chatRouter from './src/routes/chatRoutes.js';
->>>>>>> a1ced7f3806a5a1a6259573e361058535cf3106c
 
 const app = express();
 const port = process.env.PORT || 5000;

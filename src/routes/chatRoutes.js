@@ -1,12 +1,14 @@
 import { Router } from 'express';
-import { sendMessage } from '../controllers/chat.js';
+import { createChat, deleteMessage, getChat, getMessages, sendMessage } from '../controllers/chat.js';
 const SECRET_KEY = process.env.SECRET_KEY;
 
 
 const router = Router();
 router.use('/', verifyAuthToken);
 router.route('/send').post(sendMessage);
+router.route('/createChat').post(createChat);
 router.route('/getMessages').get(getMessages);
+router.route('/getChat').get(getChat);
 router.route('/delete').delete(deleteMessage);
 
 // middleware function that validates user is signed in with an auth token

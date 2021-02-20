@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+const { Schema } = mongoose;
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -22,6 +22,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  chats: [{
+    type: Schema.Types.ObjectId,
+    ref: 'chat',
+  }],
+  pendingChats: [{
+    type: Schema.Types.ObjectId,
+    ref: 'queue',
+  }],
 });
 
 export default mongoose.model('user', userSchema);

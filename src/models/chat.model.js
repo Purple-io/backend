@@ -1,5 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
-
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 const chatSchema = new mongoose.Schema({
   conversationId: { type: Schema.Types.ObjectId },
   userIds: [{
@@ -10,7 +10,6 @@ const chatSchema = new mongoose.Schema({
   messageIds: [{
     type: Schema.Types.ObjectId,
     ref: 'message',
-    required: false,
   }],
   banned: [{type: String}],
 });

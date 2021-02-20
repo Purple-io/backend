@@ -1,11 +1,21 @@
 import Chat from '../models/chat.model.js';
-import mongoose, { Schema } from 'mongoose';
+import User from '../models/user.model.js';
 import Message from '../models/message.model.js';
 
-export const send = async (req, res) => {
-  const { messageContent, conversationId } = req.body;
+export const sendMessage = async (req, res) => {
+  const { messageContent, chatId } = req.body;
   const user = req.user;
-  const chat = await Chat.findById(conversationId).populate('userIds').exec();
+  const chat = await Chat.findById(chatId).populate('userIds').exec((chat, err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'DB error.' });
+      return;
+    } else if (chat === null) {
+      res.status(500).json({ error: 'Chat does not exist.' });
+      return;
+    }
+    return chat;
+  });
   const users = chat.userIds;
   let fromUser = null;
   let toUser = null;
@@ -22,31 +32,134 @@ export const send = async (req, res) => {
     toUser: toUser,
     content: messageContent,
   });
-  await message.save();
+  await message.save().catch((err) => {
+    console.error(err);
+    res.status(500).json({ error: 'There was an error with the database.' });
+    return;
+  });
+  chat.messages.push({_id: message.id});
+  await chat.save().catch((err) => {
+    console.error(err);
+    res.status(500).json({ error: 'There was an error with the database.' });
+    return;
+  });
   res.statusCode(200);
 };
 
+export const createChat = async (req, res) => {
+    const { user1Id, user2Id, banned, queueId} = req.body;
+    let user1 = await User.findById(user1Id, (user, err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'DB error' });
+        return;
+      } else if (user === null) {
+        res.status(500).json({ error: 'User does not exist.' });
+        return;
+      }
+      return user;
+    });
+    let user2 = await User.findById(user2Id, (user, err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'DB error' });
+        return;
+      } else if (user === null) {
+        res.status(500).json({ error: 'User does not exist.' });
+        return;
+      }
+      return user;
+    });
+    
+    let chat = new Chat({
+      fromUser: user1,
+      toUser: user2,
+      banned: banned,
+    });
+    await chat.save().catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'DB error' });
+      return;
+    });
+    user1.pendingChats.pull({_id: queueId});
+    user2.pendingChats.pull({_id: queueId});
+    user1.chats.push({_id: chat.id});
+    user2.chats.push({_id: chat.id});
+    await user1.save().catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'DB error' });
+      return;
+    });
+    await user2.save().catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'DB error' });
+      return;
+    });
+    res.statusCode(200);
+    
+};
+
 export const getMessages = async (req, res) => {
-    const { conversationId } = req.body;
+    const { chatId } = req.body;
     const user = req.user;
     // TODO: uncomment when ready to add pagination
     // const skipAmount = req.params.pageIndex;
     const skipAmount = 0;
-    const chat = await Chat.findById(conversationId).populate('userIds').populate({
+    const chat = await Chat.findById(chatId).populate('userIds').populate({
         path: 'messages',
         options: {
             limit: 10,
             sort: { created: -1},
             skip: skipAmount * 2
         }
-    }).exec();
+    }).exec((chat, err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'There was an error with the database.' });
+        return;
+      } else if (chat === null) {
+        res.status(500).json({ error: 'Chat does not exist.' });
+        return;
+      }
+      return chat;
+    });
     const messages = chat.messages;
     res.status(200).json(messages);
-  };
+};
+
+export const getChat = async (req, res) => {
+    const { chatId } = req.body;
+    const chat = await Chat.findById(chatId).exec((chat, err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'There was an error with the database.' });
+        return;
+      } else if (chat === null) {
+        res.status(500).json({ error: 'Chat does not exist.' });
+        return;
+      }
+      return chat;
+    });
+    res.status(200).json(chat);
+};
 
 export const deleteMessage = async (req, res) => {
-    const { conversationId, messageId } = req.body;
-    const chat = await Chat.findById(conversationId).exec();
-    chat.messageIds.pull(Schema.Types.ObjectId(conversationId));
-    chat.save();
+    const { chatId, messageId } = req.body;
+    const chat = await Chat.findById(chatId).exec((chat, err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'There was an error with the database.' });
+        return;
+      } else if (chat === null) {
+        res.status(500).json({ error: 'Chat does not exist.' });
+        return;
+      }
+      return chat;
+    });
+    chat.messages.pull({_id: messageId});
+    chat.save().catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'There was an error with the database.' });
+      return;
+    });
 };
