@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
-
 export const register = async (req, res) => {
   const { email, password, affiliation, firstName, lastName } = req.body;
 
