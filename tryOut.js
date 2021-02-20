@@ -1,6 +1,5 @@
-import fuzzy from 'fuzzy';
-import FuzzySearch from 'fuzzy-search';
-
+import fuzzysort from 'fuzzysort';
+import Filter from 'bad-words';
 /*
 Using fuzzy or fuzzy search, write the code where given a message, asterick out the banned wrods
 
@@ -9,29 +8,34 @@ message = "My nama is XYZ"
 result = My **** is ***
 */
 
-let message = 'My name is XYZ';
-var list = message.split(' ');
-console.log(list);
+let message = 'the fucking president is doanaald mctrumpy you b1tch suck my c0ck!! i love whtie supremacy';
+const banned = ["donald","trump","white"];
 
-var results = fuzzy.filter('XYkZ', list);
-var matches = results.map((el) => el.string);
+console.log("Banned words: " + banned);
+console.log("Message Before: " + message);
 
-console.log('ran');
-console.log(results);
-console.log(matches);
+const replace = [];
 
-const people = [
-  {
-    name: {
-      firstName: 'XYZ',
-      lastName: 'Bowen',
-    },
-    state: 'Seattle',
-  },
-];
+const words = message.split(' ');
+for(const word of words){
+  for (const ban of banned){
+    const results = fuzzysort.single(ban, word, {
+      allowTypo: true
+    });
+    if(results){
+      replace.push(word);
+      replace.push(ban);
+    }
+  } 
+}
 
-const searcher = new FuzzySearch(people, ['name.firstName', 'state'], {
-  caseSensitive: true,
-});
-const result = searcher.search('XYkZ');
-console.log(result);
+var filter = new Filter();
+filter.addWords(...replace);
+message = filter.clean(message);
+
+console.log("Message After: " + message);
+
+
+
+
+
