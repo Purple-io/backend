@@ -22,6 +22,8 @@ export const findMatch = async (req, res) => {
 
     if (!matchedUser) {
       const newUser = Queues.create({ userId, issue, rating });
+      user.pendingChats.push({_id: newUser._id});
+      await user.save();
       res.status(202).json({ msg: "Couldn't find a matched user" });
       return;
     }

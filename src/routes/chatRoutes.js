@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { createChat, deleteMessage, getChat, getMessages, sendMessage } from '../controllers/chat.js';
+import jwt from 'jsonwebtoken';
 const SECRET_KEY = process.env.SECRET_KEY;
 
 
@@ -21,6 +22,8 @@ function verifyAuthToken(req, res, next) {
               return res.sendStatus(403)
             } 
             req.user = user
+            console.log("user: ");
+            console.log(req.user);
             next() 
           })
     } else {
