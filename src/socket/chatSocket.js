@@ -35,8 +35,8 @@ export const sendMessage = async (data, socket) => {
     console.log(fromUser);
     console.log("to User");
     console.log(toUser);
-    
-    
+
+
     let message = new Message({
       fromUser: fromUser,
       toUser: toUser,
@@ -46,7 +46,7 @@ export const sendMessage = async (data, socket) => {
       console.error(err);
       return;
     });
-    chat.messages.push({ _id: message.id });
+    chat.messageIds.push({ _id: message.id });
     await chat.save().catch((err) => {
       console.error(err);
       return;
@@ -54,5 +54,5 @@ export const sendMessage = async (data, socket) => {
   } catch (err) {
     console.error(err);
   }
-  
+
 };

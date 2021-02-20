@@ -1,9 +1,6 @@
 import fuzzysort from 'fuzzysort';
 import Filter from 'bad-words';
 
-// let message = 'the fucking president is doald mctrumpy you b1tch suck my c0ck!! i love whtie supremacy';
-// const banned = ["donald","trump","white"];
-
 export const censor = (message, banned) => {
   const replace = [];
 
@@ -15,7 +12,7 @@ export const censor = (message, banned) => {
       banned.push(word.substring(0, j) + word.substring(j+1));
     }
   }
-  
+
   const words = message.split(' ');
   for(const word of words){
     for (const ban of banned){
@@ -25,9 +22,9 @@ export const censor = (message, banned) => {
       if(results){
         replace.push(word);
       }
-    } 
+    }
   }
-  
+
   var filter = new Filter();
   filter.addWords(...replace);
   message = filter.clean(message);
