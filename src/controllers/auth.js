@@ -2,10 +2,8 @@ import argon2 from 'argon2';
 import Users from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = process.env.SECRET_KEY;
-
 export const register = async (req, res) => {
-  const { email, password, affiliation, firstName, lastName } = req.body;
+  const { email, password, affiliation, first_name, last_name } = req.body;
 
   const hashedPassword = await argon2.hash(password, {
     type: argon2.argon2id,
@@ -25,8 +23,8 @@ export const register = async (req, res) => {
     email,
     password: hashedPassword,
     affiliation,
-    firstName,
-    lastName,
+    first_name,
+    last_name,
   };
 
   const newUser = await Users.create(data).catch((err) => {

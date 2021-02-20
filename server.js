@@ -7,6 +7,7 @@ import morgan from 'morgan';
 
 import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
+import chatRouter from './src/routes/chatRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,6 +28,7 @@ mongoose
 
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
+app.use('/chat', chatRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
