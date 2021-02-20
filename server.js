@@ -8,6 +8,7 @@ import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
 import matchRouter from './src/routes/match.js';
 import chatRouter from './src/routes/chatRoutes.js';
+import { sendMessage } from './src/socket/chatSocket.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -42,9 +43,14 @@ const io = new server.Server(http, {
   }
 });
 
+// io.on("connection", function(socket) {
+//   socket.on("new-operations", function(data) {
+//     io.emit("new-remote-operations", data);
+//   });
+// });
 io.on("connection", function(socket) {
-  socket.on("new-operations", function(data) {
-    io.emit("new-remote-operations", data);
+  socket.on('sendMessage', (data) => {
+    sendMessage(data, socket);
   });
 });
 
