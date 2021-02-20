@@ -174,16 +174,13 @@ export const getAllChats = async (req, res) => {
     res.status(500).json({ error: 'User does not exist.' });
     return;
   }
-  // let chatIds = user.chats;
-  // for (var c of chatIds) {
-
-  // }
   res.status(200).json(user.chats);
 };
 
 export const getAllPendingChats = async (req, res) => {
   const { userId } = req.query;
-  const user = await User.findById(userId).catch((err) => {
+  const user = await User.findById(userId)
+  .populate('pendingChats').catch((err) => {
     console.error(err);
     res.status(500).json({ error: 'There was an error with the database.' });
     return;
