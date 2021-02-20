@@ -4,14 +4,10 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import 'dotenv/config.js';
 import morgan from 'morgan';
-import { createServer } from 'http';
-import * as io from 'socket.io';
 import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
 import matchRouter from './src/routes/match.js';
 import chatRouter from './src/routes/chatRoutes.js';
-
-import { sendMessage } from './src/socket/chatSocket.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,30 +31,52 @@ app.use('/login', loginRouter);
 app.use('/match', matchRouter);
 app.use('/chat', chatRouter);
 
-const server = createServer(app);
-const socketio = new io.Server(server);
+import { Server } from 'http';
+import * as server from "socket.io"
 
-socketio.on('connection', (socket) => {
-  console.log('user connected');
-  socket.on('disconnect', () => {
-    console.log('Disconnected');
+const http = Server(app);
+const io = new server.Server(http, {
+  cors: {
+    origin: '*',
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", function(socket) {
+  socket.on("new-operations", function(data) {
+    io.emit("new-remote-operations", data);
   });
 });
 
-socketio.on('sendMessage', (data) => {
-  sendMessage(data, socket);
-});
 
-// socketio.on("deleteMessage", (data) => {
-//   deleteMessage(data, socket);
+// const server = createServer(app);
+// const socketio = new io.Server(server);
+
+// socketio.on('connection', (socket) => {
+//   console.log('user connected');
+//   socket.on('disconnect', () => {
+//     console.log('Disconnected');
+//   });
 // });
 
-socketio.on('chat message', function (msg) {
-  console.log('message: ' + msg);
-  //broadcast message to everyone in port:5000 except yourself.
-  socket.broadcast.emit('received', { message: msg });
-});
+// socketio.on('sendMessage', (data) => {
+//   sendMessage(data, socket);
+// });
 
-server.listen(port, () => {
-  console.log(`SERVER Server is running on port: ${port}`);
+// // socketio.on("deleteMessage", (data) => {
+// //   deleteMessage(data, socket);
+// // });
+
+// socketio.on('chat message', function (msg) {
+//   console.log('message: ' + msg);
+//   //broadcast message to everyone in port:5000 except yourself.
+//   socket.broadcast.emit('received', { message: msg });
+// });
+
+// server.listen(port, () => {
+//   console.log(`SERVER Server is running on port: ${port}`);
+// });
+
+http.listen(5000, function() {
+  console.log("listening on *:5000");
 });
