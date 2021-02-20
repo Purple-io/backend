@@ -151,3 +151,31 @@ export const deleteMessage = async (req, res) => {
       return;
     });
 };
+
+export const getAllChats = async (req, res) => {
+  const { userId } = req.body;
+  const user = await User.findById(userId).catch((err) => {
+    console.error(err);
+    res.status(500).json({ error: 'There was an error with the database.' });
+    return;
+  });
+  if (user === null) {
+    res.status(500).json({ error: 'User does not exist.' });
+    return;
+  }
+  res.status(200).json(user.chats);
+};
+
+export const getAllPendingChats = async (req, res) => {
+  const { userId } = req.body;
+  const user = await User.findById(userId).catch((err) => {
+    console.error(err);
+    res.status(500).json({ error: 'There was an error with the database.' });
+    return;
+  });
+  if (user === null) {
+    res.status(500).json({ error: 'User does not exist.' });
+    return;
+  }
+  res.status(200).json(user.pendingChats);
+};
