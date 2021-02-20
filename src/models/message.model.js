@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const messageSchema = new mongoose.Schema({
   messageId: { type: mongoose.Schema.Types.ObjectId },
@@ -18,4 +19,5 @@ const messageSchema = new mongoose.Schema({
   },
 });
 
+messageSchema.set('timestamps', { currentTime: new Date() });
 export default mongoose.model('message', messageSchema);
