@@ -24,7 +24,8 @@
     "fuzzysort": "^1.1.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.17",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "socket.io": "^3.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
