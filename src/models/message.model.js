@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-const { Schema } = mongoose;
+
 const messageSchema = new mongoose.Schema({
-  messageId: { type: Schema.Types.ObjectId },
+  messageId: { type: mongoose.Schema.Types.ObjectId },
   fromUser: {
     type: Schema.Types.ObjectId,
     ref: 'user',
