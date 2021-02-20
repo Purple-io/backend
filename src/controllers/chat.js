@@ -1,4 +1,5 @@
 import Chat from '../models/chat.model.js';
+import Queue from '../models/queue.model.js';
 import User from '../models/user.model.js';
 import Message from '../models/message.model.js';
 import mongoose from 'mongoose';
@@ -75,14 +76,21 @@ export const createChat = async (req, res) => {
       return;
     }
     console.log("user1 and user2");
+    let userIdsArray = [user1, user2];
     let chat = new Chat({
-      fromUser: user1,
-      toUser: user2,
+      userIds: userIdsArray,
       banned: banned,
     });
     await chat.save().catch((err) => {
       console.error(err);
       res.status(500).json({ error: 'DB error' });
+      return;
+    });
+    console.log("Chat: ");
+    console.log(chat);
+    Queue.findByIdAndDelete(queueId).catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'There was an error with the database.' });
       return;
     });
     user1.pendingChats.pull({_id: queueId});

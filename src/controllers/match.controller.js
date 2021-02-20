@@ -4,10 +4,9 @@ import Users from '../models/user.model.js';
 export const findMatch = async (req, res) => {
   try {
     let { userId, issue, rating } = req.body;
-
+    let user = await Users.findById(userId);
     if (rating == null) {
       // go to datbase to find the specific user
-      const user = await Users.findById(userId);
       rating = user.affiliation;
       console.log(rating);
     }
@@ -21,7 +20,9 @@ export const findMatch = async (req, res) => {
     });
 
     if (!matchedUser) {
-      const newUser = Queues.create({ userId, issue, rating });
+      const newUser = await Queues.create({ userId, issue, rating });
+      console.log("newUser");
+      console.log(newUser);
       user.pendingChats.push({_id: newUser._id});
       await user.save();
       res.status(202).json({ msg: "Couldn't find a matched user" });
