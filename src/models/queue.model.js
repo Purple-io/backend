@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 const queueSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.ObjectId,
+    type: Schema.Types.ObjectId,
+    ref: 'user',
     required: true,
   },
   issue: {

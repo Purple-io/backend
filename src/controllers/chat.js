@@ -193,3 +193,52 @@ export const censorSenderMessage = async (req, res) => {
   messageContent = censor(messageContent, banned);
   res.status(200).json(messageContent);
 };
+
+export const deleteChat = async (req, res) => {
+  try {
+    const { chatId } = req.body;
+    const chat = await Chat.findById(chatId).populate('userIds').catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'There was an error with the database.' });
+      return;
+    });
+    if (chat === null) {
+      res.status(500).json({ error: 'Chat does not exist.' });
+      return;
+    }
+    let user1 = chat.userIds[0];
+    let user2 = chat.userIds[1];
+    user1.chats.pull({ _id: chatId });
+    user2.chats.pull({ _id: chatId });
+    await user1.save();
+    await user2.save();
+    await Chat.findByIdAndDelete(chatId).exec();
+    res.status(200).json({"message": "success"});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({"message": "failed"});
+  }
+};
+
+export const deletePendingChat = async (req, res) => {
+  try {
+    const { queueId } = req.body;
+    const queue = await Queue.findById(queueId).populate('userId').catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'There was an error with the database.' });
+      return;
+    });
+    if (queue === null) {
+      res.status(500).json({ error: 'Queue does not exist.' });
+      return;
+    }
+    let user = queue.userId;
+    user.pendingChats.pull({ _id: queueId });
+    await user.save();
+    await Queue.findByIdAndDelete(queueId).exec();
+    res.status(200).json({"message": "success"});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({"message": "failed"});
+  }
+};
