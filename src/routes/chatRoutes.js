@@ -7,6 +7,7 @@ import {
   sendMessage,
   getAllChats,
   getAllPendingChats,
+  censorSenderMessage
 } from '../controllers/chat.js';
 import jwt from 'jsonwebtoken';
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -20,6 +21,7 @@ router.route('/getChat').get(getChat);
 router.route('/getAllChats').get(getAllChats);
 router.route('/getAllPendingChats').get(getAllPendingChats);
 router.route('/delete').delete(deleteMessage);
+router.route('/censorSenderMessage').get(censorSenderMessage);
 
 // middleware function that validates user is signed in with an auth token
 function verifyAuthToken(req, res, next) {
