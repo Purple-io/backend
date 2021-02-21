@@ -149,6 +149,7 @@ export const getAllChats = async (req, res) => {
   const user = await User.findById(userId)
     .populate({
       path: 'chats',
+      options: { sort: { updatedAt: -1 } },
       populate: {
         path: 'userIds',
       },
@@ -162,7 +163,9 @@ export const getAllChats = async (req, res) => {
     res.status(500).json({ error: 'User does not exist.' });
     return;
   }
-
+  let arr = user.chats;
+  console.log("array of chats", arr);
+  // arr.sort()
   res.status(200).json(user.chats);
 };
 
