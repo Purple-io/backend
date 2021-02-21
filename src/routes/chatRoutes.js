@@ -21,7 +21,7 @@ router.route('/getChat').get(getChat);
 router.route('/getAllChats').get(getAllChats);
 router.route('/getAllPendingChats').get(getAllPendingChats);
 router.route('/delete').delete(deleteMessage);
-router.route('/censorSenderMessage').get(censorSenderMessage);
+router.route('/censorSenderMessage').post(censorSenderMessage);
 
 // middleware function that validates user is signed in with an auth token
 function verifyAuthToken(req, res, next) {
