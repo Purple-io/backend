@@ -49,6 +49,8 @@ export const sendMessage = async (data, socket) => {
       return;
     });
 
+    chat.updatedAt = message.createdAt;
+
     let dataPayload = {
       message: messageContent,
       timestamp: message.createdAt,

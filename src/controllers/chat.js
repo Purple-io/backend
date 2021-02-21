@@ -168,7 +168,7 @@ export const getAllChats = async (req, res) => {
 
 
 // getRecentMessage = async (chat) => {
-//   chat.me
+//   // chat.populate('messageIds')
 // }
 
 export const getAllPendingChats = async (req, res) => {
