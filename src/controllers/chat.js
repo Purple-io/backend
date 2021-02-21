@@ -84,14 +84,14 @@ export const createChat = async (data) => {
 
 export const getMessages = async (req, res) => {
   const { chatId } = req.body;
-  const user = req.user;
+  // const user = req.user;
   // TODO: uncomment when ready to add pagination
   // const skipAmount = req.params.pageIndex;
-  const skipAmount = 0;
+  let skipAmount = 0;
   const chat = await Chat.findById(chatId)
     .populate('userIds')
     .populate({
-      path: 'messages',
+      path: 'messageIds',
       options: {
         limit: 10,
         sort: { created: -1 },
@@ -107,7 +107,7 @@ export const getMessages = async (req, res) => {
     res.status(500).json({ error: 'Chat does not exist.' });
     return;
   }
-  const messages = chat.messages;
+  const messages = chat.messageIds;
   res.status(200).json(messages);
 };
 
@@ -136,7 +136,7 @@ export const deleteMessage = async (req, res) => {
     res.status(500).json({ error: 'Chat does not exist.' });
     return;
   }
-  chat.messages.pull({ _id: messageId });
+  chat.messageIds.pull({ _id: messageId });
   chat.save().catch((err) => {
     console.error(err);
     res.status(500).json({ error: 'There was an error with the database.' });
