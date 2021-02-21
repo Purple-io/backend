@@ -83,7 +83,7 @@ export const createChat = async (data) => {
 };
 
 export const getMessages = async (req, res) => {
-  const { chatId } = req.body;
+  const { chatId } = req.query;
   // const user = req.user;
   // TODO: uncomment when ready to add pagination
   // const skipAmount = req.params.pageIndex;
@@ -162,8 +162,14 @@ export const getAllChats = async (req, res) => {
     res.status(500).json({ error: 'User does not exist.' });
     return;
   }
+
   res.status(200).json(user.chats);
 };
+
+
+// getRecentMessage = async (chat) => {
+//   chat.me
+// }
 
 export const getAllPendingChats = async (req, res) => {
   const { userId } = req.query;
