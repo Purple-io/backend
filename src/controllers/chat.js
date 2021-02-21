@@ -46,7 +46,7 @@ export const sendMessage = async (req, res) => {
 
 export const createChat = async (data) => {
   try {
-    const { user1Id, user2Id, banned, queueId } = data;
+    const { user1Id, user2Id, banned, queueId, issue } = data;
     console.log('Queue Id: ' + queueId);
     let user1 = await User.findById(user1Id);
     if (user1 === null) {
@@ -60,7 +60,9 @@ export const createChat = async (data) => {
     let chat = new Chat({
       userIds: userIdsArray,
       banned: banned,
+      issue: issue,
     });
+
     await chat.save();
     console.log('Chat: ');
     console.log(chat);

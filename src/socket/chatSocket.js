@@ -3,11 +3,12 @@ import Queue from '../models/queue.model.js';
 import User from '../models/user.model.js';
 import Message from '../models/message.model.js';
 import mongoose from 'mongoose';
+import {censor} from '../controllers/censor.js';
 
 export const sendMessage = async (data, socket) => {
   try {
-    const { messageContent, chatId, userId} = data;
-    socket.broadcast.emit('received', { message: messageContent });
+    let { messageContent, chatId, userId} = data;
+
     let user = await User.findById(userId).exec();
     if (user === null) {
       return;
@@ -21,6 +22,7 @@ export const sendMessage = async (data, socket) => {
     if (chat === null) {
       return;
     }
+    messageContent = censor(messageContent, chat.banned);
     const users = chat.userIds;
     let fromUser = null;
     let toUser = null;
@@ -46,6 +48,15 @@ export const sendMessage = async (data, socket) => {
       console.error(err);
       return;
     });
+
+    let dataPayload = {
+      message: messageContent,
+      timestamp: message.createdAt,
+      sender: fromUser,
+      chatId: chatId,
+    }
+    socket.broadcast.emit('received', dataPayload);
+
     chat.messageIds.push({ _id: message.id });
     await chat.save().catch((err) => {
       console.error(err);

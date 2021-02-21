@@ -42,6 +42,7 @@ export const findMatch = async (req, res) => {
       user2Id: matchedQueue.userId,
       banned: combinedBannedWords,
       queueId: matchedQueue._id,
+      issue: issue
     };
     const chat = await createChat(data);
     Queues.findByIdAndDelete(matchedQueue._id, (err) => {

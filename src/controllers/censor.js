@@ -2,6 +2,8 @@ import fuzzysort from 'fuzzysort';
 import Filter from 'bad-words';
 
 export const censor = (message, banned) => {
+  let temp = []
+  banned = temp.concat(banned);
   const replace = [];
 
 
