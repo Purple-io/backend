@@ -6,22 +6,21 @@ export const censor = (message, banned) => {
   banned = temp.concat(banned);
   const replace = [];
 
-
   const origSize = banned.length;
-  for(let i = 0;i<origSize;i++){
+  for (let i = 0; i < origSize; i++) {
     const word = banned[i];
-    for(let j = 0;j<word.length;j++){
-      banned.push(word.substring(0, j) + word.substring(j+1));
+    for (let j = 0; j < word.length; j++) {
+      banned.push(word.substring(0, j) + word.substring(j + 1));
     }
   }
 
   const words = message.split(' ');
-  for(const word of words){
-    for (const ban of banned){
+  for (let word of words) {
+    for (let ban of banned) {
       const results = fuzzysort.single(ban, word, {
-        allowTypo: true
+        allowTypo: true,
       });
-      if(results){
+      if (results) {
         replace.push(word);
       }
     }
@@ -31,16 +30,8 @@ export const censor = (message, banned) => {
   filter.addWords(...replace);
   message = filter.clean(message);
   return message;
-}
+};
 
 // console.log(banned);
 // console.log(message);
 // console.log(censor(message, banned));
-
-
-
-
-
-
-
-

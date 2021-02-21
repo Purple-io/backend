@@ -39,3 +39,14 @@ Content-Type: application/json
     "messageContent": "hello ke",
     "chatId": "6031448dd2199fab574066fa"
 }
+
+###
+
+GET http://localhost:5000/news
+Content-Type: application/json
+
+{
+    "issue": "Gun Control", 
+    "user1Id": "6031305ec0294ba3f6d023d7",
+    "user2Id": "603131ac1cca7ca55e5db17e"
+}

@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
+
+// sub schema that stores an array of issues
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -38,6 +40,10 @@ const userSchema = new mongoose.Schema({
       ref: 'queue',
     },
   ],
+  news: {
+    type: Schema.Types.Map,
+    default: {},
+  },
 });
 
 export default mongoose.model('user', userSchema);

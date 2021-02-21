@@ -4,11 +4,13 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import 'dotenv/config.js';
 import morgan from 'morgan';
+
 import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
 import matchRouter from './src/routes/match.js';
 import chatRouter from './src/routes/chatRoutes.js';
 import { sendMessage } from './src/socket/chatSocket.js';
+import newsRouter from './src/routes/news.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,16 +33,17 @@ app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/match', matchRouter);
 app.use('/chat', chatRouter);
+app.use('/news', newsRouter);
 
 import { Server } from 'http';
-import * as server from "socket.io"
+import * as server from 'socket.io';
 
 const http = Server(app);
 const io = new server.Server(http, {
   cors: {
     origin: '*',
-    methods: ["GET", "POST"]
-  }
+    methods: ['GET', 'POST'],
+  },
 });
 
 // io.on("connection", function(socket) {
@@ -48,12 +51,11 @@ const io = new server.Server(http, {
 //     io.emit("new-remote-operations", data);
 //   });
 // });
-io.on("connection", function(socket) {
+io.on('connection', function (socket) {
   socket.on('sendMessage', (data) => {
     sendMessage(data, socket);
   });
 });
-
 
 // const server = createServer(app);
 // const socketio = new io.Server(server);
@@ -83,6 +85,6 @@ io.on("connection", function(socket) {
 //   console.log(`SERVER Server is running on port: ${port}`);
 // });
 
-http.listen(5000, function() {
-  console.log("listening on *:5000");
+http.listen(5000, function () {
+  console.log('listening on *:5000');
 });
