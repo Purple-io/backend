@@ -5,8 +5,7 @@ const newsapi = new NewsAPI('24fe88ad1b1a4978b89de84073fa6046');
 
 export const getNews = async (req, res) => {
   try {
-    const { issue, user1Id, user2Id } = req.body;
-    // const { issue, user1Id, user2Id } = req.params;
+    const { issue, user1Id, user2Id } = req.query;
 
     const user1 = await Users.findById(user1Id);
     const user2 = await Users.findById(user2Id);
