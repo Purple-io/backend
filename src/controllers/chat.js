@@ -188,7 +188,8 @@ export const getAllPendingChats = async (req, res) => {
 };
 
 export const censorSenderMessage = async (req, res) => {
-  const { messageContent, banned } = req.body;
+  let { messageContent, banned } = req.body;
+
   messageContent = censor(messageContent, banned);
   res.status(200).json(messageContent);
 };
