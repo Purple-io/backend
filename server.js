@@ -9,7 +9,7 @@ import registerRouter from './src/routes/register.js';
 import loginRouter from './src/routes/login.js';
 import matchRouter from './src/routes/match.js';
 import chatRouter from './src/routes/chatRoutes.js';
-import { sendMessage } from './src/socket/chatSocket.js';
+import { sendMessage, sendMessageNC } from './src/socket/chatSocket.js';
 import newsRouter from './src/routes/news.js';
 
 const app = express();
@@ -54,6 +54,9 @@ const io = new server.Server(http, {
 io.on('connection', function (socket) {
   socket.on('sendMessage', (data) => {
     sendMessage(data, socket);
+  });
+  socket.on('sendMessageNC', (data) => {
+    sendMessageNC(data, socket);
   });
 });
 
