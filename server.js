@@ -11,6 +11,7 @@ import matchRouter from './src/routes/match.js';
 import chatRouter from './src/routes/chatRoutes.js';
 import { sendMessage, sendMessageNC } from './src/socket/chatSocket.js';
 import newsRouter from './src/routes/news.js';
+import testRouter from './src/routes/test.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -34,6 +35,7 @@ app.use('/login', loginRouter);
 app.use('/match', matchRouter);
 app.use('/chat', chatRouter);
 app.use('/news', newsRouter);
+app.use('/', testRouter);
 
 import { Server } from 'http';
 import * as server from 'socket.io';
