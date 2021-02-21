@@ -195,8 +195,10 @@ export const censorSenderMessage = async (req, res) => {
 };
 
 export const deleteChat = async (req, res) => {
+  console.log("Delete Chat: ");
   try {
     const { chatId } = req.body;
+    console.log("Chat Id: ", chatId);
     const chat = await Chat.findById(chatId).populate('userIds').catch((err) => {
       console.error(err);
       res.status(500).json({ error: 'There was an error with the database.' });
