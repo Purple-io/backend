@@ -93,7 +93,7 @@ export const getMessages = async (req, res) => {
     .populate({
       path: 'messageIds',
       options: {
-        limit: 10,
+        // limit: 100,
         sort: { created: -1 },
         skip: skipAmount * 2,
       },
