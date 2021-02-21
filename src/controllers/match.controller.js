@@ -59,3 +59,19 @@ export const findMatch = async (req, res) => {
     res.status(500).json({ error: 'There was an error. Please try again!' });
   }
 };
+
+export const generateScore = async (req, res) => {
+  try {
+    const values = Object.values(req.body);
+
+    let sum = 0;
+    for (const value of values) {
+      sum += value;
+    }
+    res.status(200).json({ score: Math.min(5, Math.max(-5, sum)) });
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'There was an error. Please try again!' });
+  }
+};
