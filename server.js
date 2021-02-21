@@ -90,6 +90,6 @@ io.on('connection', function (socket) {
 //   console.log(`SERVER Server is running on port: ${port}`);
 // });
 
-http.listen(5000, function () {
+http.listen(port, function () {
   console.log('listening on *:5000');
 });
